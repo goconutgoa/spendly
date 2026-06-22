@@ -1,0 +1,217 @@
+/* ------------------------------------------------------------------ */
+/* Landing hero — centered layout with dashboard mockup               */
+/* ------------------------------------------------------------------ */
+
+.hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 4rem 2rem 5rem;
+    gap: 0;
+}
+
+.hero-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 720px;
+}
+
+/* Badge --------------------------------------------------------------- */
+
+.hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    background: #e3f1e9;
+    color: #2f7d52;
+    font-size: 0.9rem;
+    font-weight: 500;
+    letter-spacing: 0;
+    text-transform: none;
+    padding: 0.5rem 1.15rem;
+    border-radius: 999px;
+    margin-bottom: 2rem;
+}
+
+.badge-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #3a8f60;
+}
+
+/* Title --------------------------------------------------------------- */
+
+.hero-title {
+    font-family: 'DM Sans', system-ui, sans-serif;
+    font-weight: 700;
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    line-height: 1.08;
+    letter-spacing: -0.03em;
+    color: #0f0f0f;
+    margin-bottom: 1.5rem;
+}
+
+.hero-title-accent {
+    color: #3a8f60;
+}
+
+/* Subtitle ------------------------------------------------------------ */
+
+.hero-subtitle {
+    font-size: 1.2rem;
+    line-height: 1.6;
+    color: #5f5f5f;
+    max-width: 600px;
+    margin-bottom: 2.5rem;
+}
+
+/* Actions ------------------------------------------------------------- */
+
+.hero-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-bottom: 4rem;
+}
+
+.hero-btn {
+    display: inline-block;
+    background: #111;
+    color: #fff;
+    font-size: 1.05rem;
+    font-weight: 600;
+    padding: 1rem 1.75rem;
+    border-radius: 14px;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s;
+    text-decoration: none;
+}
+
+.hero-btn:hover {
+    background: #2f2f2f;
+}
+
+/* Dashboard mockup ---------------------------------------------------- */
+
+.hero-dashboard {
+    width: 100%;
+    max-width: 1000px;
+    background: #f4f2ef;
+    border: 1px solid #e7e3dd;
+    border-radius: 20px;
+    padding: 1.5rem;
+}
+
+.dash-dots {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.25rem;
+    padding-left: 0.25rem;
+}
+
+.dash-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+
+.dot-red { background: #e8897e; }
+.dot-amber { background: #e8c14e; }
+.dot-green { background: #8fd1b0; }
+
+/* Stat cards ---------------------------------------------------------- */
+
+.dash-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.dash-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    background: #ffffff;
+    border: 1px solid #eae6e0;
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    text-align: left;
+}
+
+.stat-label {
+    font-size: 0.95rem;
+    color: #8a8a8a;
+}
+
+.stat-value {
+    font-size: 1.6rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: #1a1a1a;
+}
+
+.stat-sub {
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.sub-red { color: #c0392b; }
+.sub-green { color: #3a8f60; }
+.sub-gray { color: #a0a0a0; font-weight: 500; }
+
+/* Category bars ------------------------------------------------------- */
+
+.dash-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 1.1rem;
+    background: #ffffff;
+    border: 1px solid #eae6e0;
+    border-radius: 12px;
+    padding: 1.5rem 1.75rem;
+}
+
+.bar-row {
+    display: grid;
+    grid-template-columns: 70px 1fr;
+    align-items: center;
+    gap: 1.25rem;
+}
+
+.bar-label {
+    text-align: right;
+    font-size: 1rem;
+    color: #6b6b6b;
+}
+
+.bar-track {
+    height: 10px;
+    background: #ece8e2;
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.bar-fill {
+    height: 100%;
+    border-radius: 999px;
+}
+
+.fill-food { background: #e8a33d; }
+.fill-travel { background: #4f8fd0; }
+.fill-bills { background: #7a6fd0; }
+
+/* Responsive ---------------------------------------------------------- */
+
+@media (max-width: 760px) {
+    .dash-stats { grid-template-columns: 1fr; }
+    .hero-actions { flex-direction: column; width: 100%; max-width: 320px; }
+    .hero-btn { width: 100%; text-align: center; }
+}
