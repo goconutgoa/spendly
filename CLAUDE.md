@@ -11,8 +11,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 The actual project lives one level down, in a **nested** `expense-tracker/` folder. The outer folder (the working directory) also holds `venv/` and `chat.txt`.
 
 ```
-expense-tracker/            <- working dir; venv lives here
-└── expense-tracker/        <- ACTUAL project root + git repo root
+expense-tracker/            <- working dir + git repo root; venv lives here
+└── expense-tracker/        <- ACTUAL project root (Flask app lives here)
     ├── app.py              <- Flask entry point
     ├── database/db.py      <- placeholder: get_db/init_db/seed_db to be written (Step 1)
     ├── templates/          <- Jinja2 templates extending base.html
@@ -20,7 +20,7 @@ expense-tracker/            <- working dir; venv lives here
     └── requirements.txt
 ```
 
-Because of this nesting, paths are a recurring footgun. Run project commands from inside the nested folder, e.g. `cd expense-tracker && pip install -r requirements.txt`. The git repository is initialized in the nested folder, not the outer one.
+Because of this nesting, paths are a recurring footgun. Run project commands from inside the nested folder, e.g. `cd expense-tracker && pip install -r requirements.txt`. There is a **single git repository, rooted at the outer folder** (the working directory); the inner project files are tracked under `expense-tracker/`. (Historically the inner folder had its own `.git` too — that nested repo has been removed.)
 
 ## Commands
 
