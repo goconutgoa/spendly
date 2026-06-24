@@ -1,0 +1,19 @@
+# Virtual environment
+venv/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.env
+
+# Database
+expense_tracker.db
+
+# OS / editor cruft
+.DS_Store
+__MACOSX/
+
+# Claude
+.claude/plans/
