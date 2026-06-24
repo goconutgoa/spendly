@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+
+{% block title %}Spendly — Track Every Rupee{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/landing.css') }}">
+{% endblock %}
+
+{% block content %}
+
+<section class="hero">
+    <div class="hero-inner">
+        <div class="hero-badge">
+            <span class="badge-dot"></span>Free to use · No credit card needed
+        </div>
+        <h1 class="hero-title">
+            Track every rupee.<br>
+            <span class="hero-title-accent">Know where it goes.</span>
+        </h1>
+        <p class="hero-subtitle">
+            Spendly helps you log expenses, spot patterns, and stay
+            on budget — without the spreadsheet headache.
+        </p>
+        <div class="hero-actions">
+            <a href="{{ url_for('register') }}" class="hero-btn">Create free account</a>
+            <a href="#" class="hero-btn" id="see-how-btn">See how it works</a>
+        </div>
+    </div>
+
+    <div class="hero-dashboard">
+        <div class="dash-dots">
+            <span class="dash-dot dot-red"></span>
+            <span class="dash-dot dot-amber"></span>
+            <span class="dash-dot dot-green"></span>
+        </div>
+        <div class="dash-stats">
+            <div class="dash-stat">
+                <span class="stat-label">This month</span>
+                <span class="stat-value">₹18,240</span>
+                <span class="stat-sub sub-red">+12% vs last</span>
+            </div>
+            <div class="dash-stat">
+                <span class="stat-label">Budget left</span>
+                <span class="stat-value">₹6,760</span>
+                <span class="stat-sub sub-green">43% remaining</span>
+            </div>
+            <div class="dash-stat">
+                <span class="stat-label">Transactions</span>
+                <span class="stat-value">34</span>
+                <span class="stat-sub sub-gray">this month</span>
+            </div>
+        </div>
+        <div class="dash-bars">
+            <div class="bar-row">
+                <span class="bar-label">Food</span>
+                <div class="bar-track"><div class="bar-fill fill-food" style="width: 75%"></div></div>
+            </div>
+            <div class="bar-row">
+                <span class="bar-label">Travel</span>
+                <div class="bar-track"><div class="bar-fill fill-travel" style="width: 50%"></div></div>
+            </div>
+            <div class="bar-row">
+                <span class="bar-label">Bills</span>
+                <div class="bar-track"><div class="bar-fill fill-bills" style="width: 38%"></div></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="features">
+    <div class="features-inner">
+        <div class="feature-card">
+            <div class="feature-icon">₹</div>
+            <h3 class="feature-title">Log expenses instantly</h3>
+            <p class="feature-body">Add any expense in seconds. Category, amount, date, description — all in one simple form.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">◎</div>
+            <h3 class="feature-title">Understand your patterns</h3>
+            <p class="feature-body">See exactly where your money goes with category breakdowns and monthly summaries.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">◷</div>
+            <h3 class="feature-title">Filter by time period</h3>
+            <p class="feature-body">View your spending for any date range — last week, last month, or a custom period.</p>
+        </div>
+    </div>
+</section>
+
+<section class="cta-section">
+    <div class="cta-inner">
+        <h2 class="cta-title">Ready to take control?</h2>
+        <p class="cta-body">Join thousands of people who track their expenses with Spendly.</p>
+        <a href="{{ url_for('register') }}" class="btn-primary">Create free account</a>
+    </div>
+</section>
+
+<div class="video-modal" id="video-modal" aria-hidden="true">
+    <div class="video-modal-backdrop" data-close></div>
+    <div class="video-modal-dialog" role="dialog" aria-modal="true" aria-label="How Spendly works">
+        <button class="video-modal-close" type="button" aria-label="Close" data-close>&times;</button>
+        <div class="video-modal-frame">
+            <iframe id="video-iframe" src="" title="How Spendly works"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowfullscreen></iframe>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    (function () {
+        // Placeholder video — replace VIDEO_URL with the real YouTube embed URL later.
+        var VIDEO_URL = "https://www.youtube.com/embed/dQw4w9WgXcQ";
+
+        var openBtn = document.getElementById("see-how-btn");
+        var modal = document.getElementById("video-modal");
+        var iframe = document.getElementById("video-iframe");
+
+        function openModal(e) {
+            if (e) e.preventDefault();
+            // Setting the src on open (with autoplay) starts the video.
+            iframe.src = VIDEO_URL + "?autoplay=1&rel=0";
+            modal.classList.add("is-open");
+            modal.setAttribute("aria-hidden", "false");
+            document.body.style.overflow = "hidden";
+        }
+
+        function closeModal() {
+            modal.classList.remove("is-open");
+            modal.setAttribute("aria-hidden", "true");
+            document.body.style.overflow = "";
+            // Clearing the src unloads the player so audio/video stops immediately.
+            iframe.src = "";
+        }
+
+        openBtn.addEventListener("click", openModal);
+
+        // Close on the close button or on any backdrop / outside click.
+        modal.addEventListener("click", function (e) {
+            if (e.target.hasAttribute("data-close")) {
+                closeModal();
+            }
+        });
+
+        // Close on Escape for convenience.
+        document.addEventListener("keydown", function (e) {
+            if (e.key === "Escape" && modal.classList.contains("is-open")) {
+                closeModal();
+            }
+        });
+    })();
+</script>
+{% endblock %}
