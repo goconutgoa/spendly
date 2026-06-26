@@ -1,4 +1,10 @@
 {
   "permissions": {
+    "allow": [
+      "Bash(../venv/Scripts/python.exe app.py)",
+      "Read(//tmp/**)",
+      "Bash(tasklist //FI \"PID eq 21776\")",
+      "Bash(tasklist //FI \"IMAGENAME eq python.exe\")"
+    ]
   }
 }
