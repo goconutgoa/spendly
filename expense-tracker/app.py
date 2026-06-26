@@ -1,8 +1,8 @@
 import os
 import sqlite3
 
-from flask import Flask, render_template, request, redirect, url_for, flash
-from werkzeug.security import generate_password_hash
+from flask import Flask, render_template, request, redirect, url_for, flash, session
+from werkzeug.security import generate_password_hash, check_password_hash
 
 from database.db import get_db, init_db, seed_db, get_user_by_email, create_user
 
@@ -63,9 +63,34 @@ def register():
     return render_template("register.html")
 
 
-@app.route("/login")
+@app.route("/login", methods=["GET", "POST"])
 def login():
+    if request.method == "POST":
+        email = request.form.get("email", "").strip().lower()
+        password = request.form.get("password", "")
+
+        # One generic message for every failure mode (empty fields, unknown
+        # email, wrong password) so we never reveal which part was wrong.
+        if not email or not password:
+            return render_template("login.html", error="Invalid email or password.")
+
+        user = get_user_by_email(email)
+        if user is None or not check_password_hash(user["password_hash"], password):
+            return render_template("login.html", error="Invalid email or password.")
+
+        session["user_id"] = user["id"]
+        session["user_name"] = user["name"]
+        flash(f"Welcome back, {user['name']}!", "success")
+        return redirect(url_for("landing"))
+
     return render_template("login.html")
+
+
+@app.route("/logout")
+def logout():
+    session.clear()
+    flash("You've been signed out.", "success")
+    return redirect(url_for("landing"))
 
 
 @app.route("/terms")
@@ -81,11 +106,6 @@ def privacy():
 # ------------------------------------------------------------------ #
 # Placeholder routes — students will implement these                  #
 # ------------------------------------------------------------------ #
-
-@app.route("/logout")
-def logout():
-    return "Logout — coming in Step 3"
-
 
 @app.route("/profile")
 def profile():
