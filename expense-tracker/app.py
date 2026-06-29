@@ -6,6 +6,12 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from database.db import get_db, init_db, seed_db, get_user_by_email, create_user
+from database.queries import (
+    get_user_by_id,
+    get_summary_stats,
+    get_recent_transactions,
+    get_category_breakdown,
+)
 
 app = Flask(__name__)
 
@@ -129,39 +135,54 @@ def privacy():
 @app.route("/profile")
 @login_required
 def profile():
-    # Step 4 is UI-first: every value below is hardcoded so the layout can be
-    # validated in isolation. Step 5 will replace this with real queries scoped
-    # to session["user_id"]. The numbers mirror the seeded demo data.
+    # Step 5: every section below is backed by live queries scoped to the
+    # logged-in user. Each data concern is assembled in its own marked block.
+    user_id = session["user_id"]
+
+    # --- User info (handled during integration) ---
+    user_row = get_user_by_id(user_id)
+    initials = (
+        "".join(part[0] for part in user_row["name"].split()[:2]).upper() or "?"
+    )
     user = {
-        "name": session.get("user_name", "Demo User"),
-        "email": "demo@spendly.com",
-        "initials": "DU",
-        "member_since": "June 2026",
+        "name": user_row["name"],
+        "email": user_row["email"],
+        "initials": initials,
+        "member_since": user_row["member_since"],
     }
+
+    # === SUBAGENT 2: SUMMARY STATS — BEGIN ===
+    stats = get_summary_stats(user_id)
     summary = {
-        "total_spent": "244.74",
-        "transaction_count": 8,
-        "top_category": "Bills",
+        "total_spent": f"{stats['total_spent']:.2f}",
+        "transaction_count": stats["transaction_count"],
+        "top_category": stats["top_category"],
     }
+    # === SUBAGENT 2: SUMMARY STATS — END ===
+
+    # === SUBAGENT 1: TRANSACTION HISTORY — BEGIN ===
     transactions = [
-        {"date": "2026-06-22", "description": "Lunch out", "category": "Food", "amount": "6.75"},
-        {"date": "2026-06-20", "description": "Misc", "category": "Other", "amount": "9.20"},
-        {"date": "2026-06-17", "description": "New headphones", "category": "Shopping", "amount": "59.99"},
-        {"date": "2026-06-14", "description": "Cinema ticket", "category": "Entertainment", "amount": "18.50"},
-        {"date": "2026-06-11", "description": "Pharmacy", "category": "Health", "amount": "25.00"},
-        {"date": "2026-06-08", "description": "Electricity bill", "category": "Bills", "amount": "74.90"},
-        {"date": "2026-06-05", "description": "Metro top-up", "category": "Transport", "amount": "12.00"},
-        {"date": "2026-06-03", "description": "Weekly groceries", "category": "Food", "amount": "38.40"},
+        {
+            "date": txn["date"],
+            "description": txn["description"],
+            "category": txn["category"],
+            "amount": f"{txn['amount']:.2f}",
+        }
+        for txn in get_recent_transactions(user_id)
     ]
+    # === SUBAGENT 1: TRANSACTION HISTORY — END ===
+
+    # === SUBAGENT 3: CATEGORY BREAKDOWN — BEGIN ===
     categories = [
-        {"name": "Bills", "total": "74.90", "pct": 31},
-        {"name": "Shopping", "total": "59.99", "pct": 25},
-        {"name": "Food", "total": "45.15", "pct": 18},
-        {"name": "Health", "total": "25.00", "pct": 10},
-        {"name": "Entertainment", "total": "18.50", "pct": 8},
-        {"name": "Transport", "total": "12.00", "pct": 5},
-        {"name": "Other", "total": "9.20", "pct": 4},
+        {
+            "name": cat["name"],
+            "total": f"{cat['amount']:.2f}",
+            "pct": cat["pct"],
+        }
+        for cat in get_category_breakdown(user_id)
     ]
+    # === SUBAGENT 3: CATEGORY BREAKDOWN — END ===
+
     return render_template(
         "profile.html",
         user=user,
