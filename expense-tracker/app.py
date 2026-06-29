@@ -1,3 +1,4 @@
+import functools
 import os
 import sqlite3
 
@@ -16,6 +17,28 @@ app.secret_key = os.environ.get("SECRET_KEY", "dev-secret-change-me")
 with app.app_context():
     init_db()
     seed_db()
+
+
+# ------------------------------------------------------------------ #
+# Auth helpers                                                        #
+# ------------------------------------------------------------------ #
+
+def login_required(view):
+    """Gate a view behind a logged-in session.
+
+    Redirects anonymous visitors (no ``user_id`` in the session) to the login
+    page with a flash; otherwise calls the wrapped view. ``functools.wraps``
+    keeps the view's name so ``url_for`` still resolves it. Reused by every
+    protected route from here on.
+    """
+    @functools.wraps(view)
+    def wrapped(*args, **kwargs):
+        if session.get("user_id") is None:
+            flash("Please sign in to continue.", "error")
+            return redirect(url_for("login"))
+        return view(*args, **kwargs)
+
+    return wrapped
 
 
 # ------------------------------------------------------------------ #
@@ -103,14 +126,54 @@ def privacy():
     return render_template("privacy.html")
 
 
+@app.route("/profile")
+@login_required
+def profile():
+    # Step 4 is UI-first: every value below is hardcoded so the layout can be
+    # validated in isolation. Step 5 will replace this with real queries scoped
+    # to session["user_id"]. The numbers mirror the seeded demo data.
+    user = {
+        "name": session.get("user_name", "Demo User"),
+        "email": "demo@spendly.com",
+        "initials": "DU",
+        "member_since": "June 2026",
+    }
+    summary = {
+        "total_spent": "244.74",
+        "transaction_count": 8,
+        "top_category": "Bills",
+    }
+    transactions = [
+        {"date": "2026-06-22", "description": "Lunch out", "category": "Food", "amount": "6.75"},
+        {"date": "2026-06-20", "description": "Misc", "category": "Other", "amount": "9.20"},
+        {"date": "2026-06-17", "description": "New headphones", "category": "Shopping", "amount": "59.99"},
+        {"date": "2026-06-14", "description": "Cinema ticket", "category": "Entertainment", "amount": "18.50"},
+        {"date": "2026-06-11", "description": "Pharmacy", "category": "Health", "amount": "25.00"},
+        {"date": "2026-06-08", "description": "Electricity bill", "category": "Bills", "amount": "74.90"},
+        {"date": "2026-06-05", "description": "Metro top-up", "category": "Transport", "amount": "12.00"},
+        {"date": "2026-06-03", "description": "Weekly groceries", "category": "Food", "amount": "38.40"},
+    ]
+    categories = [
+        {"name": "Bills", "total": "74.90", "pct": 31},
+        {"name": "Shopping", "total": "59.99", "pct": 25},
+        {"name": "Food", "total": "45.15", "pct": 18},
+        {"name": "Health", "total": "25.00", "pct": 10},
+        {"name": "Entertainment", "total": "18.50", "pct": 8},
+        {"name": "Transport", "total": "12.00", "pct": 5},
+        {"name": "Other", "total": "9.20", "pct": 4},
+    ]
+    return render_template(
+        "profile.html",
+        user=user,
+        summary=summary,
+        transactions=transactions,
+        categories=categories,
+    )
+
+
 # ------------------------------------------------------------------ #
 # Placeholder routes — students will implement these                  #
 # ------------------------------------------------------------------ #
-
-@app.route("/profile")
-def profile():
-    return "Profile page — coming in Step 4"
-
 
 @app.route("/expenses/add")
 def add_expense():
